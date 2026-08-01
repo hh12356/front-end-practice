@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多彩页面控制台</title>
+    <style>
+        html{
+            background: pink;
+        }
+
+        #contorl-panel{
+            border-radius: 20px;
+            background-color: rgb(34, 33, 33);
+            padding: 10px;
+        }
+        #cbtn-wrap{
+            display: flex;
+            /* 水平等距分布 */
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 4px;
+        }
+        #under-cbtn-wrap{
+            align-items: center;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            gap: 2%;
+        }
+        button{
+            width: 18%;
+            /* 清空高度，靠内边距撑起高度，固定长宽比例 */
+            aspect-ratio: 2/1;
+            padding: 0;
+            /* 圆角 */
+            border-radius: 20px;
+            /* 放上时变为小手样式 */
+            cursor: pointer;
+            /* 过渡动画 */
+            transition: 0.2s;
+            /* 文本处理 */
+            font-weight: bold;
+            font-size: 60%;
+            color: aliceblue;
+            border-color:rgb(34, 33, 33);
+        }
+        input{
+            width: 36.3%;
+            aspect-ratio: 5/1;
+            margin-left: 1.6%;
+            border-radius: 10px;
+            font-size: 50%;
+        }
+
+        h1{
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            font-family: "Microsoft YaHei";
+            color: rgb(26, 25, 25);
+        }
+
+        .card-wrap{
+            margin-top: 5%;
+        }
+        .card{
+            font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background: white;
+            padding: 1%;
+            margin-bottom: 1%;
+            border-radius: 20px;
+            overflow: hidden;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card span{
+            margin-left: 3%;
+            width: 78%;
+            /* 换行经典搭配 */
+            display: inline-block;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.5;
+        }
+        .delete{
+            background: gray;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="contorl-panel">
+
+        <div id="cbtn-wrap">
+        <button style="background: rgb(151, 39, 39);" onclick="setBCC(this)">红色按钮</button>
+        <button style="background: rgb(40, 40, 118);" onclick="setBCC(this)">蓝色按钮</button>
+        <button style="background: rgb(114, 152, 37);" onclick="setBCC(this)">绿色按钮</button>
+        <button style="background: gray;" onclick="setBCC(this)">白色按钮</button>
+        <button style="background: linear-gradient(135deg,pink,rgb(235, 88, 112));" onclick="setRandom(this)">随机颜色</button>
+        </div>
+        
+        <div id="under-cbtn-wrap">
+            <input type="text" placeholder="请输入内容">
+        <button style="background: rgb(173, 58, 173);" onclick="setTitle()">更改标题</button>
+        <button style="background: rgb(196, 196, 35)" onclick="addCard()">添加卡片</button>
+        </div>
+        
+    </div>
+
+    <h1>🌟欢迎来到多彩页面!</h1>
+
+    <div id="card-wrap">
+        <div class="card">
+            <span>Have a good day!</span><button class="delete">删除</button>
+        </div>
+    </div>
+
+    <script>
+        // 自适应fontSize
+        function resetfontsize(){
+            document.documentElement.style.fontSize=window.innerWidth/20+'px';
+        }
+        resetfontsize();
+        window.onresize=resetfontsize;
+
+        // 切换颜色
+        function setBCC(button){
+            var html=button.parentNode.parentNode.parentNode.parentNode;
+            html.style.background=button.style.background;
+        }
+
+        function setRandom(button){
+            var html=document.documentElement;
+            html.style.background='#' + Math.floor(Math.random() * 16777216).toString(16).padStart(6, '0')
+        }
+
+        //更改标题
+        function setTitle(){
+            var input=document.getElementsByTagName("input")[0];
+            var str=input.value;
+            if(str==''){
+                alert("你输入的内容为空");
+                return;
+            }
+            var title=document.getElementsByTagName("h1")[0];
+            title.innerHTML=str;
+            input.value='';
+        }
+
+        //添加卡片
+        function addCard(){
+            var input=document.getElementsByTagName("input")[0];
+            var str=input.value;
+            input.value='';
+            if(str==''){
+                alert("你输入的内容为空");
+                return;
+            }
+            
+            var wrapper=document.getElementById("card-wrap");
+            wrapper.innerHTML+="<div class='card'><span>"+str+"</span><button class='delete'>删除</button></div>";
+        }
+
+        //删除卡片
+        // function deleteCard(button){
+            // var card=button.parentNode;
+            // var wrapper=card.parentNode;
+            // wrapper.removeChild(card);
+        // }
+        document.getElementById('card-wrap').addEventListener('click',function(e){
+                var deleteBtn=e.target.closest(".delete");
+                if(deleteBtn){
+                    var card = deleteBtn.closest(".card");
+                    card.remove();
+                }
+        })
+    </script>
+</body>
+</html>
