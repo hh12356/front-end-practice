@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>事件监听练习</title>
+    <style>
+        html{
+            background: rgb(36, 35, 35);
+        }
+        #mouse{
+            left: 20%;
+            top: 8%;
+            width: 100px;
+            height: 80px;
+            background-color: pink;
+            border-radius: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+            user-select: none;
+
+            position: absolute;
+            /* transition: top 0.02s,left 0.02s; */
+        }
+        #mouse:active{
+            cursor:grabbing;
+        }
+        #keyboard{
+            left: 60%;
+            top: 8%;
+            width: 100px;
+            height: 80px;
+            background-color: rgb(107, 142, 147);
+            border-radius: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            user-select: none;
+
+            position: absolute;
+            transition: top 0.02s,left 0.02s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mouse">mouse</div>
+    <div id="keyboard">keyboard</div>
+
+    <script>
+        let isDrawing=false;
+        offsetX=0;
+        offsetY=0;
+        let mouse=document.getElementById("mouse");
+        let keyboard=document.getElementById("keyboard");
+
+        mouse.addEventListener("mousedown",function(e){
+            isDrawing=true;
+            offsetX=e.clientX-mouse.offsetLeft;
+            offsetY=e.clientY-mouse.offsetTop;
+        })
+
+        document.addEventListener("mousemove",function(e){
+            if(isDrawing){
+                var newX=(e.clientX-offsetX);
+                var newY=(e.clientY-offsetY);
+                //边界控制
+                targetX=Math.max(0,Math.min(newX,document.documentElement.clientWidth-mouse.offsetWidth));
+                targetY=Math.max(0,Math.min(newY,document.documentElement.clientHeight-mouse.offsetHeight));
+
+                mouse.style.left=targetX+'px';
+                mouse.style.top=targetY+'px';
+            }
+        })
+
+        document.addEventListener("mouseup",function(e){
+            isDrawing=false;
+        })
+
+        let keyMap={};
+        let speed=5; 
+
+        document.addEventListener('keydown',function(e){
+            keyMap[e.code]=true;
+        })
+
+        document.addEventListener('keyup',function(e){
+            keyMap[e.code]=false;
+        })
+
+        function animate(){
+            var x=keyboard.offsetLeft;
+            var y=keyboard.offsetTop;
+
+            var old_x=x;
+            var old_y=y;
+
+            if(keyMap['ArrowLeft']){x-=speed;}
+            if(keyMap['ArrowRight']){x+=speed;}
+            if(keyMap['ArrowUp']){y-=speed;}
+            if(keyMap['ArrowDown']){y+=speed;}
+
+            if(x!=old_x&&y!=old_y){
+                x=old_x+=(x-old_x)/Math.sqrt(2);
+                y=old_y+=(y-old_y)/Math.sqrt(2);
+            }//斜行处理
+
+            x=Math.max(0,Math.min(x,document.documentElement.clientWidth-keyboard.offsetWidth));
+            y=Math.max(0,Math.min(y,document.documentElement.clientHeight-keyboard.offsetHeight));
+            
+            keyboard.style.left=x+'px';
+            keyboard.style.top=y+'px';
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+
+    </script>
+</body>
+</html>
