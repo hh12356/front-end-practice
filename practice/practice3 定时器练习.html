@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>定时器练习</title>
+    <style>
+        html{
+            background: gray;
+        }
+
+        #input-wrap{
+            display: flex;
+            justify-content: center;
+        }
+        #input-wrap input{
+            width: 30%;
+            aspect-ratio: 2.5/1;
+            font-size: 1rem;
+            border-radius: 0.4rem;
+        }
+
+        #count-wrap{
+            display: flex;
+            justify-content: center;
+        }
+        #count-wrap h2{
+            color: rgb(59, 59, 231);
+            font-size: 4rem;
+            margin: 0;
+        }
+
+        #button-wrap{
+            display: flex;
+            justify-content: center;
+            gap: 3%;
+            margin: 2%;
+        }
+        #button-wrap button{
+            width: 14%;
+            aspect-ratio: 2/1;
+            font-size: 0.6rem;
+            border-radius: 0.4rem;
+        }
+
+        #slide-wrap{
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            margin-left: 15px;
+        }
+        #slide-wrap img{
+            width: 90%;
+            aspect-ratio: 2/1;
+            border-radius: 15px;
+        }
+
+        #dot-wrap{
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        #dot-wrap div{
+            background: rgb(66, 66, 173);
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            transition: 0.4s;
+            user-select: none;
+        }
+        #dot-wrap div:hover{
+            background: rgb(32, 32, 211);
+            transition: 0.4s;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center; font-size: 1rem;">倒计时器</h1>
+
+    <div id="input-wrap">
+    <input type="text" value="60" style="text-align: center;">
+    </div>
+
+    <div id="count-wrap">
+        <h2 id="show">00:00</h2>
+    </div>
+
+    <div id="button-wrap">
+        <button id="button-start">开始</button>
+        <button id="button-pause">暂停</button>
+        <button id="button-reset">重置</button>
+    </div>
+
+    <div id="slide-wrap">
+        <img src="./assets/slide1.jpg" alt="图片无法加载">    
+    </div>
+
+    <div id="dot-wrap">
+        <div id="dot1" onclick="setImg(this)"></div>
+        <div id="dot2" onclick="setImg(this)"></div>
+        <div id="dot3" onclick="setImg(this)"></div>
+        <div id="dot4" onclick="setImg(this)"></div>
+    </div>
+
+    <script>
+        // 自适应fontSize
+        function resetfontsize(){
+            document.documentElement.style.fontSize=window.innerWidth/20+'px';
+        }
+        resetfontsize();
+        window.onresize=resetfontsize;
+
+        let start=document.getElementById("button-start");
+        let pause=document.getElementById("button-pause");
+        let reset=document.getElementById("button-reset");
+        let show=document.getElementById("show");
+
+        pause.disabled=true; 
+        let timer=null;
+        let stop=false;
+
+        let min=0;
+        let sec=0;
+
+        start.addEventListener("click",function(e){
+            var input=document.getElementsByTagName("input")[0].value;
+            var num=Number(input);
+
+            if(isNaN(num)||num<0){
+                alert("你输入的数字无效");
+                return;
+            }
+            if(!Number.isInteger(num)){
+                alert("请输入整数");
+                return;
+            }
+            if(num>=3600){
+                alert('你输入的数字过大');
+                return;
+            }
+
+            sec=num%60;
+            min=Math.floor(num/60);
+            
+            var sec_str=sec.toString().padStart(2,'0');
+            var min_str=min.toString().padStart(2,'0');
+            show.innerHTML=min_str+':'+sec_str;
+
+            pause.disabled=false;
+            start.disabled=true;
+
+            timer = setInterval(function(){
+                if(sec==0){
+                    min--;
+                    sec=59;
+                }
+                else{
+                    sec--;
+                }
+
+                if(min==0&&sec==0){
+                    clearInterval(timer);
+                    show.innerHTML="时间到!";
+                    pause.disabled=true;
+                    start.disabled=false;
+                    return;
+                }
+
+                sec_str=sec.toString().padStart(2,'0');
+                min_str=min.toString().padStart(2,'0');
+                show.innerHTML=min_str+':'+sec_str;
+            },1000)
+
+        })
+
+        pause.addEventListener("click",function(e){
+            if(stop){
+            timer = setInterval(function(){
+                if(sec==0){
+                    min--;
+                    sec=59;
+                }
+                else{
+                    sec--;
+                }
+
+                if(min==0&&sec==0){
+                    clearInterval(timer);
+                    show.innerHTML="时间到!";
+                    pause.disabled=true;
+                    start.disabled=false;
+                    return;
+                }
+
+                sec_str=sec.toString().padStart(2,'0');
+                min_str=min.toString().padStart(2,'0');
+                show.innerHTML=min_str+':'+sec_str;
+            },1000)
+                pause.innerHTML='暂停';
+                stop=!stop;
+            }
+            else{
+                clearInterval(timer);
+                pause.innerHTML='继续'
+                stop=!stop;
+            }
+        })
+
+        reset.addEventListener("click",function(e){
+            clearInterval(timer);
+            show.innerHTML="00:00";
+            start.disabled=false;
+            pause.disabled=true;
+            stop = false;
+            pause.innerHTML = '暂停';
+            document.getElementsByTagName('input')[0].value=60;
+        })
+
+        let img=document.getElementsByTagName('img')[0];
+        let slide_timer=null;
+        let idx=2;
+
+        slide_timer=setInterval(function(e){
+            img.src="./assets/slide"+idx+".jpg"
+            idx++;
+            if(idx>4){idx=1;}
+        },2000)
+
+        function setImg(button){
+            clearInterval(slide_timer);
+            idx=Number(button.id[button.id.length-1]);
+                img.src="./assets/slide"+idx+".jpg"
+                idx++;
+                if(idx>4){idx=1;}
+
+            slide_timer=setInterval(function(){
+                img.src="./assets/slide"+idx+".jpg"
+                idx++;
+                if(idx>4){idx=1;}
+            },2000)
+        }
+
+    </script>
+</body>
+</html>
