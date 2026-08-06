@@ -59,7 +59,7 @@
             justify-content: center;
             gap: 5px;
         }
-        #dot-wrap div{
+        .dot{
             background: rgb(66, 66, 173);
             width: 15px;
             height: 15px;
@@ -67,8 +67,13 @@
             transition: 0.4s;
             user-select: none;
         }
-        #dot-wrap div:hover{
+        .dot:hover{
             background: rgb(32, 32, 211);
+            transition: 0.4s;
+        }
+
+        .dot.active{
+            background: rgb(32, 32, 211);;
             transition: 0.4s;
         }
     </style>
@@ -96,10 +101,10 @@
     </div>
 
     <div id="dot-wrap">
-        <div id="dot1" onclick="setImg(this)"></div>
-        <div id="dot2" onclick="setImg(this)"></div>
-        <div id="dot3" onclick="setImg(this)"></div>
-        <div id="dot4" onclick="setImg(this)"></div>
+        <div id="dot1" class="dot" onclick="setImg(this)"></div>
+        <div id="dot2" class="dot" onclick="setImg(this)"></div>
+        <div id="dot3" class="dot" onclick="setImg(this)"></div>
+        <div id="dot4" class="dot" onclick="setImg(this)"></div>
     </div>
 
     <script>
@@ -114,6 +119,7 @@
         let pause=document.getElementById("button-pause");
         let reset=document.getElementById("button-reset");
         let show=document.getElementById("show");
+        highlightDot(1);
 
         pause.disabled=true; 
         let timer=null;
@@ -124,6 +130,10 @@
 
         start.addEventListener("click",function(e){
             var input=document.getElementsByTagName("input")[0].value;
+            if(input==''){
+                alert("你输入的数字无效");
+                return;
+            }
             var num=Number(input);
 
             if(isNaN(num)||num<0){
@@ -220,8 +230,19 @@
         let slide_timer=null;
         let idx=2;
 
+        function highlightDot(index){
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach(d=>d.classList.remove('active'));
+
+            const currentDot=document.getElementById('dot'+index);
+            if(currentDot){
+                currentDot.classList.add('active');
+            }
+        }
+
         slide_timer=setInterval(function(e){
             img.src="./assets/slide"+idx+".jpg"
+            highlightDot(idx);
             idx++;
             if(idx>4){idx=1;}
         },2000)
@@ -230,11 +251,13 @@
             clearInterval(slide_timer);
             idx=Number(button.id[button.id.length-1]);
                 img.src="./assets/slide"+idx+".jpg"
+                highlightDot(idx);
                 idx++;
                 if(idx>4){idx=1;}
 
             slide_timer=setInterval(function(){
                 img.src="./assets/slide"+idx+".jpg"
+                highlightDot(idx);
                 idx++;
                 if(idx>4){idx=1;}
             },2000)

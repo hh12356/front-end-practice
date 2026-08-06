@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>状态按钮</title>
+    <style>
+        html{
+            background: gray;
+        }
+        .wrap{
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;            
+        }
+        .magicBtn{
+            width: 40%;
+            aspect-ratio: 2/1;
+            border-radius: 20px;
+            font-size: 4vh;
+
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrap">
+    <button class="magicBtn">点我试试</button>
+    </div>
+
+    <script>
+        let button=document.getElementsByClassName('magicBtn')[0];
+        let state=0;
+        let timer=null;
+
+        button.addEventListener('click',function(){
+            console.log(1);
+            
+            //连击
+            if(timer){
+                clearTimeout(timer);
+                timer=null;
+            }
+            //不管单击连击，先更新状态
+            state++;
+            
+            //启动计时器
+            timer=setTimeout(function(){
+                update(state);
+                state=0;
+                timer=null
+            },300)
+        })
+
+        function update(state){
+            if(state>=3){
+                button.style.color='';
+                button.innerHTML='点我试试'
+                document.documentElement.style.background='gray';
+            }
+            else if(state==1){
+                button.style.color='brown';
+                button.innerHTML="红了";
+                document.documentElement.style.background='brown';
+            }
+            else if(state ==2){
+                button.style.color='rgb(32, 173, 173)';
+                button.innerHTML="蓝了";
+                document.documentElement.style.background='rgb(32, 173, 173)';
+            }
+        }
+
+    </script>
+</body>
+</html>
